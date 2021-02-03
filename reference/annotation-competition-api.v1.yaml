@@ -10,11 +10,7 @@ paths:
       summary: Create New User
       operationId: post-user
       responses:
-        '400':
-          description: Missing Required Information
-        '409':
-          description: Email Already Taken
-        '500':
+        '200':
           description: User Created
           content:
             application/json:
@@ -27,6 +23,10 @@ paths:
                     userName: string
                     email: user@example.com
                     userId: string
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
       requestBody:
         content:
           application/json:
@@ -50,7 +50,13 @@ paths:
                 - userName
                 - email
                 - password
-            examples: {}
+            examples:
+              example-1:
+                value:
+                  userId: string
+                  userName: string
+                  email: user@example.com
+                  password: pa$$word
           application/javascript:
             schema:
               type: object
@@ -143,7 +149,45 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  competitionId:
+                    type: string
+                    minLength: 1
+                  competitionName:
+                    type: string
+                    minLength: 1
+                  startAt:
+                    type: string
+                    minLength: 1
+                  endAt:
+                    type: string
+                    minLength: 1
+                  isRunning:
+                    type: boolean
+                required:
+                  - competitionId
+                  - competitionName
+                  - startAt
+                  - endAt
+                  - isRunning
+              examples:
+                example:
+                  value:
+                    competitionId: string
+                    competitionName: string
+                    startAt: string
+                    endAt: string
+                    isRunning: true
+        '500':
+          description: Internal Server Error
       operationId: get-competition-next
       description: 開催中，もしくは次のコンペティションの情報を取得
   /competition/assignment:
@@ -205,11 +249,8 @@ paths:
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
+        '400':
+          description: Bad Request
         '500':
           description: Internal Server Error
       description: アノテーション結果を送信（認証が必要）
@@ -219,6 +260,41 @@ paths:
           in: header
           name: 'Authorization: Token <AccessToken>'
           description: 認証のためのアクセストークン
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                competitionId:
+                  type: string
+                  minLength: 1
+                annotations:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    required:
+                      - imageId
+                      - annotation
+                    properties:
+                      imageId:
+                        type: string
+                        minLength: 1
+                      annotation:
+                        type: string
+                        minLength: 1
+              required:
+                - competitionId
+                - annotations
+            examples:
+              example:
+                value:
+                  competitionId: string
+                  annotations:
+                    - imageId: string
+                      annotation: string
 components:
   schemas:
     User:
