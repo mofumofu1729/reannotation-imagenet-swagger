@@ -10,17 +10,23 @@ paths:
       summary: Create New User
       operationId: post-user
       responses:
-        '200':
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+        '500':
           description: User Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-              examples: {}
-        '400':
-          description: Missing Required Information
-        '409':
-          description: Email Already Taken
+              examples:
+                example:
+                  value:
+                    id: 0
+                    userName: string
+                    email: user@example.com
+                    userId: string
       requestBody:
         content:
           application/json:
@@ -70,8 +76,14 @@ paths:
                 properties:
                   accessToken:
                     type: string
+              examples:
+                example:
+                  value:
+                    accessToken: string
         '401':
           description: Unauthorized
+        '500':
+          description: Internal Server Error
       requestBody:
         content:
           application/json:
@@ -101,15 +113,32 @@ paths:
                     items:
                       type: object
                       properties:
-                        '':
+                        userId:
                           type: string
+                        userName:
+                          type: string
+                        annotationCount:
+                          type: string
+                        rank:
+                          type: integer
+              examples:
+                example:
+                  value:
+                    users:
+                      - userId: string
+                        userName: string
+                        annotationCount: string
+                        rank: string
+        '500':
+          description: Internal Server Error
       operationId: get-leader_board
       parameters:
         - schema:
             type: string
           in: header
-          name: 'Authorization: Token'
-      description: アノテーションコンペティションのリーダーボードの情報を取得
+          name: 'Authorization: Token <AccessToken>'
+          description: 認証のためのアクセストークン
+      description: アノテーションコンペティションのリーダーボードの情報を取得（認証が必要）
   /competition/next:
     get:
       summary: Your GET endpoint
@@ -121,16 +150,75 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  competitionId:
+                    type: string
+                    minLength: 1
+                  images:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        imageId:
+                          type: string
+                          minLength: 1
+                        imageUrl:
+                          type: string
+                          format: uri
+                      required:
+                        - imageId
+                required:
+                  - competitionId
+                  - images
+              examples:
+                example:
+                  value:
+                    competitionId: string
+                    images:
+                      - imageId: string
+                        imageUrl: 'http://example.com'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
       operationId: get-competition-assignment
-      description: アノテーションする画像などの情報を取得
+      description: アノテーションする画像などの情報を取得(認証が必要)
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: Token <AccessToken>'
+          description: 認証のためのアクセストークン
     post:
       summary: ''
       operationId: post-competition-assignment
       responses:
         '200':
           description: OK
-      description: アノテーション結果を送信
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '500':
+          description: Internal Server Error
+      description: アノテーション結果を送信（認証が必要）
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'Authorization: Token <AccessToken>'
+          description: 認証のためのアクセストークン
 components:
   schemas:
     User:
