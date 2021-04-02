@@ -86,10 +86,6 @@ paths:
             schema:
               type: object
               properties:
-                userId:
-                  type: string
-                userName:
-                  type: string
                 email:
                   type: string
                   format: email
@@ -99,15 +95,11 @@ paths:
                   maxLength: 20
                   format: password
               required:
-                - userId
-                - userName
                 - email
                 - password
             examples:
               example-1:
                 value:
-                  userId: string
-                  userName: string
                   email: user@example.com
                   password: pa$$word
           application/javascript:
@@ -201,7 +193,7 @@ paths:
             schema:
               type: object
               properties:
-                userId:
+                email:
                   type: string
                 password:
                   type: string
