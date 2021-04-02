@@ -3,9 +3,9 @@ info:
   title: annotation-competition-api
   version: '1.0'
 servers:
-  - url: 'http://annotation-competition.herokuapp.com/api/v1'
+  - url: 'https://annotation-competition.herokuapp.com'
 paths:
-  /user:
+  /auth:
     post:
       summary: Create New User
       operationId: post-user
@@ -15,14 +15,67 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                description: ''
+                type: object
+                properties:
+                  status:
+                    type: string
+                    minLength: 1
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      provider:
+                        type: string
+                        minLength: 1
+                      uid:
+                        type: string
+                        minLength: 1
+                      allow_password_change:
+                        type: boolean
+                      name: {}
+                      nickname: {}
+                      image: {}
+                      email:
+                        type: string
+                        minLength: 1
+                      created_at:
+                        type: string
+                        minLength: 1
+                      updated_at:
+                        type: string
+                        minLength: 1
+                    required:
+                      - id
+                      - provider
+                      - uid
+                      - allow_password_change
+                      - email
+                      - created_at
+                      - updated_at
+                required:
+                  - status
+                  - data
               examples:
                 example:
                   value:
-                    id: 0
-                    userName: string
-                    email: user@example.com
-                    userId: string
+                    status: success
+                    data:
+                      id: 1
+                      provider: email
+                      uid: example@example.com
+                      allow_password_change: false
+                      name: null
+                      nickname: null
+                      image: null
+                      email: example@example.com
+                      created_at: '2000-01-01T01:30:08.421Z'
+                      updated_at: '2000-01-01T01:30:08.490Z'
+            application/javascript:
+              schema:
+                type: object
+                properties: {}
         '400':
           description: Missing Required Information
         '409':
@@ -33,10 +86,6 @@ paths:
             schema:
               type: object
               properties:
-                userId:
-                  type: string
-                userName:
-                  type: string
                 email:
                   type: string
                   format: email
@@ -46,15 +95,11 @@ paths:
                   maxLength: 20
                   format: password
               required:
-                - userId
-                - userName
                 - email
                 - password
             examples:
               example-1:
                 value:
-                  userId: string
-                  userName: string
                   email: user@example.com
                   password: pa$$word
           application/javascript:
@@ -67,25 +112,77 @@ paths:
               properties: {}
         description: Post the necessary fields for the API to create a new user.
       description: ユーザーを登録
-  /user/login:
+    parameters: []
+  /auth/sign_in:
     post:
       summary: ''
       operationId: post-user-login
       responses:
         '200':
           description: OK
-          headers: {}
+          headers:
+            access-token:
+              schema:
+                type: string
+            client:
+              schema:
+                type: string
+            uid:
+              schema:
+                type: string
           content:
             application/json:
               schema:
+                description: ''
                 type: object
                 properties:
-                  accessToken:
-                    type: string
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        minLength: 1
+                      uid:
+                        type: string
+                        minLength: 1
+                      id:
+                        type: number
+                      provider:
+                        type: string
+                        minLength: 1
+                      allow_password_change:
+                        type: boolean
+                      name: {}
+                      nickname: {}
+                      image: {}
+                    required:
+                      - email
+                      - uid
+                      - id
+                      - provider
+                      - allow_password_change
+                required:
+                  - data
               examples:
                 example:
                   value:
-                    accessToken: string
+                    data:
+                      email: example@example.com
+                      uid: example@example.com
+                      id: 1
+                      provider: email
+                      allow_password_change: false
+                      name: null
+                      nickname: null
+                      image: null
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+            multipart/form-data:
+              schema:
+                type: object
+                properties: {}
         '401':
           description: Unauthorized
         '500':
@@ -96,12 +193,13 @@ paths:
             schema:
               type: object
               properties:
-                userId:
+                email:
                   type: string
                 password:
                   type: string
                   format: password
       description: ログイン操作を実施し，アクセストークンを取得
+    parameters: []
   /leader_board:
     get:
       summary: Your GET endpoint
@@ -134,7 +232,7 @@ paths:
                       - userId: string
                         userName: string
                         annotationCount: string
-                        rank: string
+                        rank: 1
         '500':
           description: Internal Server Error
       operationId: get-leader_board
@@ -142,8 +240,18 @@ paths:
         - schema:
             type: string
           in: header
-          name: 'Authorization: Token <AccessToken>'
-          description: 認証のためのアクセストークン
+          name: 'access-token: <access-token>'
+          description: sign_inへのアクセス時headerで返却されたaccess-token
+        - schema:
+            type: string
+          in: header
+          name: 'client: <client>'
+          description: sign_inへのアクセス時headerで返却されたclient
+        - schema:
+            type: string
+          in: header
+          name: 'uid: <uid>'
+          description: sign_inへのアクセス時headerで返却されたuid
       description: アノテーションコンペティションのリーダーボードの情報を取得（認証が必要）
   /competition/next:
     get:
@@ -190,6 +298,22 @@ paths:
           description: Internal Server Error
       operationId: get-competition-next
       description: 開催中，もしくは次のコンペティションの情報を取得
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: 'access-token: <access-token>'
+          description: sign_inへのアクセス時headerで返却されたaccess-token
+        - schema:
+            type: string
+          in: header
+          name: 'client: <client>'
+          description: sign_inへのアクセス時headerで返却されたclient
+        - schema:
+            type: string
+          in: header
+          name: 'uid: <uid>'
+          description: sign_inへのアクセス時headerで返却されたuid
   /competition/assignment:
     get:
       summary: Your GET endpoint
@@ -213,14 +337,14 @@ paths:
                     items:
                       type: object
                       properties:
-                        imageId:
+                        assignmentId:
                           type: string
                           minLength: 1
                         imageUrl:
                           type: string
                           format: uri
                       required:
-                        - imageId
+                        - assignmentId
                 required:
                   - competitionId
                   - images
@@ -229,7 +353,7 @@ paths:
                   value:
                     competitionId: string
                     images:
-                      - imageId: string
+                      - assignmentId: string
                         imageUrl: 'http://example.com'
         '401':
           description: Unauthorized
@@ -241,8 +365,18 @@ paths:
         - schema:
             type: string
           in: header
-          name: 'Authorization: Token <AccessToken>'
-          description: 認証のためのアクセストークン
+          name: 'access-token: <access-token>'
+          description: sign_inへのアクセス時headerで返却されたaccess-token
+        - schema:
+            type: string
+          in: header
+          name: 'client: <client>'
+          description: sign_inへのアクセス時headerで返却されたclient
+        - schema:
+            type: string
+          in: header
+          name: 'uid: <uid>'
+          description: sign_inへのアクセス時headerで返却されたuid
     post:
       summary: ''
       operationId: post-competition-assignment
@@ -258,8 +392,18 @@ paths:
         - schema:
             type: string
           in: header
-          name: 'Authorization: Token <AccessToken>'
-          description: 認証のためのアクセストークン
+          name: 'access-token: <access-token>'
+          description: sign_inへのアクセス時headerで返却されたaccess-token
+        - schema:
+            type: string
+          in: header
+          name: 'client: <client>'
+          description: sign_inへのアクセス時headerで返却されたclient
+        - schema:
+            type: string
+          in: header
+          name: 'uid: <uid>'
+          description: sign_inへのアクセス時headerで返却されたuid
       requestBody:
         content:
           application/json:
@@ -275,16 +419,17 @@ paths:
                   uniqueItems: true
                   minItems: 1
                   items:
-                    required:
-                      - imageId
-                      - annotation
+                    type: object
                     properties:
-                      imageId:
+                      assignmentId:
                         type: string
                         minLength: 1
                       annotation:
                         type: string
                         minLength: 1
+                    required:
+                      - assignmentId
+                      - annotation
               required:
                 - competitionId
                 - annotations
@@ -293,28 +438,7 @@ paths:
                 value:
                   competitionId: string
                   annotations:
-                    - imageId: string
+                    - assignmentId: string
                       annotation: string
 components:
-  schemas:
-    User:
-      title: User
-      type: object
-      description: ''
-      x-examples: {}
-      properties:
-        id:
-          type: integer
-          description: Unique identifier for the given user.
-        userName:
-          type: string
-        email:
-          type: string
-          format: email
-        userId:
-          type: string
-      required:
-        - id
-        - userName
-        - email
-        - userId
+  schemas: {}
