@@ -253,7 +253,7 @@ paths:
           name: 'uid: <uid>'
           description: sign_inへのアクセス時headerで返却されたuid
       description: アノテーションコンペティションのリーダーボードの情報を取得（認証が必要）
-  /competition/next:
+  /competitions/next:
     get:
       summary: Your GET endpoint
       tags: []
@@ -314,7 +314,7 @@ paths:
           in: header
           name: 'uid: <uid>'
           description: sign_inへのアクセス時headerで返却されたuid
-  /competition/assignment:
+  /competitions/assignment:
     get:
       summary: Your GET endpoint
       tags: []
