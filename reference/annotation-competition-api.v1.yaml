@@ -210,21 +210,18 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  users:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        userId:
-                          type: string
-                        userName:
-                          type: string
-                        annotationCount:
-                          type: string
-                        rank:
-                          type: integer
+                type: array
+                items:
+                  type: object
+                  properties:
+                    userId:
+                      type: string
+                    userName:
+                      type: string
+                    annotationCount:
+                      type: string
+                    rank:
+                      type: integer
               examples:
                 example:
                   value:
