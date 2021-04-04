@@ -265,10 +265,10 @@ paths:
                 description: ''
                 type: object
                 properties:
-                  competitionId:
+                  CompetitionId:
                     type: string
                     minLength: 1
-                  competitionName:
+                  CompetitionName:
                     type: string
                     minLength: 1
                   startAt:
