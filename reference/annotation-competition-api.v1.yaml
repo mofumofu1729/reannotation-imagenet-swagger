@@ -326,6 +326,8 @@ paths:
                 description: ''
                 type: object
                 properties:
+                  message:
+                    type: string
                   competitionId:
                     type: string
                     minLength: 1
@@ -344,9 +346,6 @@ paths:
                           format: uri
                       required:
                         - assignmentId
-                required:
-                  - competitionId
-                  - images
               examples:
                 example:
                   value:
@@ -354,6 +353,9 @@ paths:
                     images:
                       - assignmentId: string
                         imageUrl: 'http://example.com'
+                competition_is_not_running:
+                  value:
+                    message: 'no competition is running'
         '401':
           description: Unauthorized
         '500':
