@@ -313,7 +313,7 @@ paths:
           in: header
           name: 'uid: <uid>'
           description: sign_inへのアクセス時headerで返却されたuid
-  /competitions/assignment:
+  /assignment:
     get:
       summary: Your GET endpoint
       tags: []
