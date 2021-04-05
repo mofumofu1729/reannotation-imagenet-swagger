@@ -94,6 +94,8 @@ paths:
                   minLength: 8
                   maxLength: 20
                   format: password
+                name:
+                  type: string
               required:
                 - email
                 - password
@@ -102,6 +104,7 @@ paths:
                 value:
                   email: user@example.com
                   password: pa$$word
+                  name: user
           application/javascript:
             schema:
               type: object
@@ -198,6 +201,11 @@ paths:
                 password:
                   type: string
                   format: password
+            examples:
+              example-1:
+                value:
+                  email: user@example.com
+                  password: pa$$word
       description: ログイン操作を実施し，アクセストークンを取得
     parameters: []
   /leader_board:
