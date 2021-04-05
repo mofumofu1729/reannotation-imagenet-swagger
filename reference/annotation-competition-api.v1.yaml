@@ -273,10 +273,10 @@ paths:
                 description: ''
                 type: object
                 properties:
-                  CompetitionId:
+                  competitionId:
                     type: string
                     minLength: 1
-                  CompetitionName:
+                  competitionName:
                     type: string
                     minLength: 1
                   startAt:
