@@ -103,7 +103,7 @@ paths:
               example-1:
                 value:
                   email: user@example.com
-                  password: pa$$word
+                  password: password
                   name: user
           application/javascript:
             schema:
@@ -205,7 +205,7 @@ paths:
               example-1:
                 value:
                   email: user@example.com
-                  password: pa$$word
+                  password: password
       description: ログイン操作を実施し，アクセストークンを取得
     parameters: []
   /leader_board:
